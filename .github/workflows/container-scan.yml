@@ -3,9 +3,11 @@ name: Container Security Analysis
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 permissions:
   contents: read
@@ -23,7 +25,7 @@ jobs:
         run: docker build -t container-security-demo:${{ github.sha }} .
 
       - name: Scan Container Image (SARIF Report)
-        uses: uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: container-security-demo:${{ github.sha }}
           format: sarif
@@ -33,13 +35,13 @@ jobs:
           exit-code: '0'
 
       - name: Upload Trivy Results
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: trivy-results.sarif
 
       - name: Security Gate
-        uses: uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@master
         with:
           image-ref: container-security-demo:${{ github.sha }}
           format: table
